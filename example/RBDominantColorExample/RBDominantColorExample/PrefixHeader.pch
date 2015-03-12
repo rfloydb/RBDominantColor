@@ -1,0 +1,21 @@
+//
+//  PrefixHeader.pch
+//  RBDominantColorExample
+//
+//  Created by Rob Brackett on 3/12/15.
+//
+//
+
+#ifndef RBDominantColorExample_PrefixHeader_pch
+#define RBDominantColorExample_PrefixHeader_pch
+
+#ifdef __cplusplus
+#import <opencv2/opencv.hpp>
+#endif
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#endif
+
+#endif
