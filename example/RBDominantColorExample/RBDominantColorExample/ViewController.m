@@ -66,7 +66,7 @@
     resultImageView.image = [dominantColors getImageWithBackgroundColor:[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:0.05] andRemovedColor:[UIColor colorWithRed:1.0 green:1.0 blue:0.0 alpha:0.05] andSwatchColorAlpha:1.0];
     
     [dominantColors minimizeColorsWithDistanceThreshold:20.0];
-    
+
     [dominantColors populateColorsIntoView:colorView];
 
     startButton.enabled = YES;

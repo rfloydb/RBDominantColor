@@ -280,6 +280,57 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 #pragma mark - Step 4 - Run kMeans
 
+- (void)setupColors
+{
+    // initialize the colors
+    
+    for (SwatchRect *s in marked) {
+        for (int i = 0 ; i < s.kMeansLength ; i++) {
+            int colorIndex = kMeansColorIndexes.at<int>(s.kMeansStartIndex + i, 0);
+            SwatchColor *c = colors[colorIndex];
+            
+            if (s.useForColorRemoval) {
+                c.colorRemovalPixels++;
+            } else {
+                c.pixels++;
+            }
+        }
+    }
+    
+    NSArray *sortedForRemoval = [colors sortedArrayUsingComparator:^NSComparisonResult(SwatchColor *obj1, SwatchColor *obj2) {
+        if (obj1.colorRemovalPixels > obj2.colorRemovalPixels) {
+            return NSOrderedAscending;
+            
+        } else if (obj1.colorRemovalPixels < obj2.colorRemovalPixels) {
+            return NSOrderedDescending;
+            
+        } else if (obj1.pixels < obj2.pixels) {
+            return NSOrderedAscending;
+            
+        } else if (obj1.pixels > obj2.pixels) {
+            return NSOrderedDescending;
+            
+        } else {
+            return NSOrderedSame;
+        }
+    }];
+    
+    NSMutableArray *removalColors = [NSMutableArray arrayWithCapacity:MAX(1, sortedForRemoval.count * faceColorRemovalPercent)];
+    for (SwatchColor *c in [sortedForRemoval subarrayWithRange:NSMakeRange(0, MAX(1, sortedForRemoval.count * faceColorRemovalPercent))]) {
+        if (c.colorRemovalPixels > 0) {
+            [removalColors addObject:c.color];
+        }
+    }
+    
+    for (SwatchColor *c in colors) {
+        CGFloat d = [c.color closestDistanceInPalette:removalColors];
+        if (d <= faceColorRemovalStep2Distance) {
+            c.removedColor = YES;
+            c.importance = 0;
+        }
+    }
+}
+
 - (void)kMeans:(int)numColors
 {
     if (status < swatchStatusGrabCut) {
@@ -351,125 +402,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     [self setupColors];
 }
 
-#pragma mark - Step 5 - Get Image
-
-- (void)setupColors
-{
-    // initialize the colors
-    
-    for (SwatchRect *s in marked) {
-        for (int i = 0 ; i < s.kMeansLength ; i++) {
-            int colorIndex = kMeansColorIndexes.at<int>(s.kMeansStartIndex + i, 0);
-            SwatchColor *c = colors[colorIndex];
-            
-            if (s.useForColorRemoval) {
-                c.colorRemovalPixels++;
-            } else {
-                c.pixels++;
-            }
-        }
-    }
-    
-    NSArray *sortedForRemoval = [colors sortedArrayUsingComparator:^NSComparisonResult(SwatchColor *obj1, SwatchColor *obj2) {
-        if (obj1.colorRemovalPixels > obj2.colorRemovalPixels) {
-            return NSOrderedAscending;
-            
-        } else if (obj1.colorRemovalPixels < obj2.colorRemovalPixels) {
-            return NSOrderedDescending;
-            
-        } else if (obj1.pixels < obj2.pixels) {
-            return NSOrderedAscending;
-            
-        } else if (obj1.pixels > obj2.pixels) {
-            return NSOrderedDescending;
-            
-        } else {
-            return NSOrderedSame;
-        }
-    }];
-    
-    NSMutableArray *removalColors = [NSMutableArray arrayWithCapacity:MAX(1, sortedForRemoval.count * faceColorRemovalPercent)];
-    for (SwatchColor *c in [sortedForRemoval subarrayWithRange:NSMakeRange(0, MAX(1, sortedForRemoval.count * faceColorRemovalPercent))]) {
-        if (c.colorRemovalPixels > 0) {
-            [removalColors addObject:c.color];
-        }
-    }
-    
-    for (SwatchColor *c in colors) {
-        CGFloat d = [c.color closestDistanceInPalette:removalColors];
-        if (d <= faceColorRemovalStep2Distance) {
-            c.removedColor = YES;
-            c.importance = 0;
-        }
-    }
-}
-
-- (UIImage *)getImageWithBackgroundColor:(UIColor *)bgColor andRemovedColor:(UIColor *)removedColor andSwatchColorAlpha:(CGFloat)alpha
-{
-    if (status < swatchStatusKMeans) {
-        NSLog(@"Can't run getImage until kMeans has been run.");
-        return nil;
-    }
-    
-    CGFloat rF;
-    CGFloat gF;
-    CGFloat bF;
-    CGFloat aF;
-    [bgColor getRed:&rF green:&gF blue:&bF alpha:&aF];
-    
-    uchar bgRed = rF * 255;
-    uchar bgGreen = gF * 255;
-    uchar bgBlue = bF * 255;
-    uchar bgAlpha = aF * 255;
-    
-    // pass one sets up the image and keeps track of the face colors
-    
-    cv::Mat newImage(self.image.size.height, self.image.size.width, CV_8UC4);
-    for (int y = 0 ; y < self.image.size.height ; y++) {
-        for (int x = 0 ; x < self.image.size.width ; x++) {
-            newImage.at<cv::Vec4b>(y, x) = {bgRed, bgGreen, bgBlue, bgAlpha};
-        }
-    }
-    
-    for (SwatchRect *r in marked) {
-        [r kMeansMat:kMeansColorIndexes intoMat:newImage withColors:colors andRemovedColor:removedColor andAlpha:alpha];
-    }
-    
-    UIImage *returnedImage = [self UIImageWithAlphaFromCVMat:newImage];
-    
-    return returnedImage;
-}
-
-- (UIImage *)UIImageWithAlphaFromCVMat:(cv::Mat)cvMat
-{
-    NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize() * cvMat.total()];
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-    
-    CGImageRef imageRef = CGImageCreate(cvMat.cols,                                 // width
-                                        cvMat.rows,                                 // height
-                                        8,                                          // bits per component
-                                        8 * cvMat.elemSize(),                       // bits per pixel
-                                        cvMat.step[0],                              // bytesPerRow
-                                        colorSpace,                                 // colorspace
-                                        kCGImageAlphaLast | kCGBitmapByteOrderDefault,
-                                        provider,                                   // CGDataProviderRef
-                                        NULL,                                       // decode
-                                        false,                                      // should interpolate
-                                        kCGRenderingIntentDefault                   // intent
-                                        );
-    
-    UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
-    CGDataProviderRelease(provider);
-    CGColorSpaceRelease(colorSpace);
-    
-    return finalImage;
-}
-
-#pragma mark - Color Minimization
+#pragma mark - Step 5 - Color Minimization
 
 - (NSArray *)sortedColorArray
 {
@@ -564,60 +497,6 @@ static const NSUInteger swatchStatusColorImportance = 3;
     status = swatchStatusColorImportance;
 }
 
-- (void)minimizeColorsWithDistanceThreshold:(CGFloat)distance
-{
-    if (status != swatchStatusKMeans) {
-        NSLog(@"Can't run minimizeColorsWithDistanceThreshold until kMeans has been run.");
-        return;
-    }
-    
-    BOOL didSomething;
-    do {
-        didSomething = NO;
-        
-        [self setColorImportance];
-        NSArray *sorted = [self sortedColorArray];
-        
-        SwatchColor *colorToRemove;
-        for (SwatchColor *c in sorted) {
-            if (c.minDist > distance || c.removedColor) {
-                continue;
-            }
-            
-            colorToRemove = c;
-            break;
-        }
-        
-        if (colorToRemove) {
-            didSomething = YES;
-            
-            SwatchColor *colorToKeep = colors[colorToRemove.minDistIndex];
-            
-            CGFloat L1, L2, a1, a2, b1, b2;
-            [colorToKeep.color getL:&L1 a:&a1 b:&b1];
-            [colorToRemove.color getL:&L2 a:&a2 b:&b2];
-            
-            CGFloat percent;
-            if (colorToKeep.pixels + colorToRemove.pixels > 0) {
-                percent = (CGFloat)colorToRemove.pixels / (CGFloat)(colorToKeep.pixels + colorToRemove.pixels);
-            } else {
-                percent = 0.5;
-            }
-            
-            L1 += (L2 - L1) * percent;
-            a1 += (a2 - a1) * percent;
-            b1 += (b2 - b1) * percent;
-            
-            colorToKeep.color = [UIColor colorWithLightness:L1 A:a1 B:b1 alpha:1.0];
-            colorToKeep.pixels += colorToRemove.pixels;
-            colorToRemove.removedColor = YES;
-        }
-        
-    } while (didSomething);
-    
-    status = swatchStatusColorImportance;
-}
-
 - (CGFloat)colorPercent:(SwatchColor *)c minPercent:(CGFloat)minPercent
 {
     if (status != swatchStatusColorImportance) {
@@ -675,6 +554,147 @@ static const NSUInteger swatchStatusColorImportance = 3;
     
     return (CGFloat)hist[index] / (CGFloat)pixels;
 }
+
+- (void)minimizeColorsWithDistanceThreshold:(CGFloat)distance
+{
+    if (status != swatchStatusKMeans) {
+        NSLog(@"Can't run minimizeColorsWithDistanceThreshold until kMeans has been run.");
+        return;
+    }
+    
+    BOOL didSomething;
+    do {
+        didSomething = NO;
+        
+        [self setColorImportance];
+        NSArray *sorted = [self sortedColorArray];
+        
+        SwatchColor *colorToRemove;
+        for (SwatchColor *c in sorted) {
+            if (c.minDist > distance || c.removedColor) {
+                continue;
+            }
+            
+            colorToRemove = c;
+            break;
+        }
+        
+        if (colorToRemove) {
+            didSomething = YES;
+            
+            SwatchColor *colorToKeep = colors[colorToRemove.minDistIndex];
+            
+            CGFloat L1, L2, a1, a2, b1, b2;
+            [colorToKeep.color getL:&L1 a:&a1 b:&b1];
+            [colorToRemove.color getL:&L2 a:&a2 b:&b2];
+            
+            CGFloat percent;
+            if (colorToKeep.pixels + colorToRemove.pixels > 0) {
+                percent = (CGFloat)colorToRemove.pixels / (CGFloat)(colorToKeep.pixels + colorToRemove.pixels);
+            } else {
+                percent = 0.5;
+            }
+            
+            L1 += (L2 - L1) * percent;
+            a1 += (a2 - a1) * percent;
+            b1 += (b2 - b1) * percent;
+            
+            colorToKeep.color = [UIColor colorWithLightness:L1 A:a1 B:b1 alpha:1.0];
+            colorToKeep.pixels += colorToRemove.pixels;
+            colorToRemove.removedColor = YES;
+        }
+        
+    } while (didSomething);
+    
+    status = swatchStatusColorImportance;
+}
+
+#pragma mark - Step 6 - Read colorArray
+
+- (NSArray *)colorArray
+{
+    NSArray *sorted = [self sortedColorArray];
+    
+    NSMutableArray *temp = [NSMutableArray array];
+    for (SwatchColor *c in sorted) {
+        if (c.removedColor) {
+            continue;
+        }
+        
+        [temp addObject:c.color];
+    }
+    
+    return temp;
+}
+
+#pragma mark - Debug - Get Image
+
+- (UIImage *)UIImageWithAlphaFromCVMat:(cv::Mat)cvMat
+{
+    NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize() * cvMat.total()];
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
+    
+    CGImageRef imageRef = CGImageCreate(cvMat.cols,                                 // width
+                                        cvMat.rows,                                 // height
+                                        8,                                          // bits per component
+                                        8 * cvMat.elemSize(),                       // bits per pixel
+                                        cvMat.step[0],                              // bytesPerRow
+                                        colorSpace,                                 // colorspace
+                                        kCGImageAlphaLast | kCGBitmapByteOrderDefault,
+                                        provider,                                   // CGDataProviderRef
+                                        NULL,                                       // decode
+                                        false,                                      // should interpolate
+                                        kCGRenderingIntentDefault                   // intent
+                                        );
+    
+    UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
+    CGImageRelease(imageRef);
+    CGDataProviderRelease(provider);
+    CGColorSpaceRelease(colorSpace);
+    
+    return finalImage;
+}
+
+- (UIImage *)getImageWithBackgroundColor:(UIColor *)bgColor andRemovedColor:(UIColor *)removedColor andSwatchColorAlpha:(CGFloat)alpha
+{
+    if (status < swatchStatusKMeans) {
+        NSLog(@"Can't run getImage until kMeans has been run.");
+        return nil;
+    }
+    
+    CGFloat rF;
+    CGFloat gF;
+    CGFloat bF;
+    CGFloat aF;
+    [bgColor getRed:&rF green:&gF blue:&bF alpha:&aF];
+    
+    uchar bgRed = rF * 255;
+    uchar bgGreen = gF * 255;
+    uchar bgBlue = bF * 255;
+    uchar bgAlpha = aF * 255;
+    
+    // pass one sets up the image and keeps track of the face colors
+    
+    cv::Mat newImage(self.image.size.height, self.image.size.width, CV_8UC4);
+    for (int y = 0 ; y < self.image.size.height ; y++) {
+        for (int x = 0 ; x < self.image.size.width ; x++) {
+            newImage.at<cv::Vec4b>(y, x) = {bgRed, bgGreen, bgBlue, bgAlpha};
+        }
+    }
+    
+    for (SwatchRect *r in marked) {
+        [r kMeansMat:kMeansColorIndexes intoMat:newImage withColors:colors andRemovedColor:removedColor andAlpha:alpha];
+    }
+    
+    UIImage *returnedImage = [self UIImageWithAlphaFromCVMat:newImage];
+    
+    return returnedImage;
+}
+
+#pragma mark - DEBUG - Create a view with the dominant colors
 
 - (void)populateColorsIntoView:(UIView *)v
 {
@@ -736,22 +756,6 @@ static const NSUInteger swatchStatusColorImportance = 3;
         
         progress += percent;
     }
-}
-
-- (NSArray *)colorArray
-{
-    NSArray *sorted = [self sortedColorArray];
-    
-    NSMutableArray *temp = [NSMutableArray array];
-    for (SwatchColor *c in sorted) {
-        if (c.removedColor) {
-            continue;
-        }
-        
-        [temp addObject:c.color];
-    }
-    
-    return temp;
 }
 
 @end
