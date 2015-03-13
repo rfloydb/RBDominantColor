@@ -25,7 +25,7 @@ static const NSUInteger swatchStatusGrabCut = 2;
 static const NSUInteger swatchStatusKMeans = 3;
 static const NSUInteger swatchStatusColorImportance = 3;
 
-@implementation Swatch {
+@implementation RBDominantColor {
     cv::CascadeClassifier faceDetector;
     
     NSMutableArray *colors;

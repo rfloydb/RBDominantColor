@@ -5,7 +5,7 @@
 
 #import "SwatchColor.h"
 
-@interface Swatch : NSObject
+@interface RBDominantColor : NSObject
 
 @property (nonatomic) UIImage *image;
 @property (nonatomic, readonly) NSArray *colorArray;
