@@ -18,77 +18,147 @@
 
 @implementation ViewController {
     UIImageView *imageView;
-    UIImageView *overlayImageView;
-    
-    UIView *histView;
-    
-    NSTimeInterval startTime;
+    UIImageView *resultImageView;
+    UIImageView *resultImageViewBackground;
+    UIView *colorView;
     UILabel *timeLabel;
     
-    RBDominantColor *s;
+    UILabel *imageViewLabel;
+    UILabel *resultImageViewLabel;
+    UILabel *resultImageViewHelpLabel;
+    UIButton *startButton;
+
+    NSTimeInterval startTime;
+    
+    RBDominantColor *dominantColors;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    s = [[RBDominantColor alloc] init];
+    [self setupView];
     
-    imageView = [[UIImageView alloc] init];
-    imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [imageView setImage:[UIImage imageNamed:@"test-image.jpg"]];
-    
-    overlayImageView = [[UIImageView alloc] init];
-    overlayImageView.contentMode = UIViewContentModeScaleAspectFit;
-    
-    histView = [[UIView alloc] init];
-    histView.backgroundColor = [UIColor blackColor];
-    
-    timeLabel = [[UILabel alloc] init];
-    timeLabel.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
-    
-    imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    overlayImageView.translatesAutoresizingMaskIntoConstraints = NO;
-    histView.translatesAutoresizingMaskIntoConstraints = NO;
-    timeLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    
-    [self.view addSubview:imageView];
-    [self.view addSubview:overlayImageView];
-    [self.view addSubview:histView];
-    [self.view addSubview:timeLabel];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[imageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView)]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[histView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(histView)]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-40-[timeLabel]-40-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:NSDictionaryOfVariableBindings(timeLabel)]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[imageView]-10-[histView(30)]-10-[timeLabel(30)]-10-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView, histView, timeLabel)]];
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlayImageView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlayImageView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlayImageView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0]];
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:overlayImageView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0]];
+    dominantColors = [[RBDominantColor alloc] init];
+}
 
-    timeLabel.text = @"";
+- (void)buttonPressed
+{
+    startButton.enabled = NO;
+    
     startTime = [NSDate timeIntervalSinceReferenceDate];
+    
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [s setImage:[UIImage imageNamed:@"test-image.jpg"]];
-        [s markFace];
-        [s markDefaultArea];
-        [s grabCut];
-        [s kMeans:16];
+        [dominantColors setImage:[UIImage imageNamed:@"test-image.jpg"]];
+        [dominantColors markFace];
+        [dominantColors markDefaultArea];
+        [dominantColors grabCut];
+        [dominantColors kMeans:16];
         
-        [self performSelectorOnMainThread:@selector(setGrabCutImage) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(setResultImage) withObject:nil waitUntilDone:NO];
     });
 }
 
-- (void)setGrabCutImage
+- (void)setResultImage
 {
-    timeLabel.text = [NSString stringWithFormat:@"%.3f secs", [NSDate timeIntervalSinceReferenceDate] - startTime];
+    timeLabel.text = [NSString stringWithFormat:@"Time Taken: %.3f secs", [NSDate timeIntervalSinceReferenceDate] - startTime];
     
-    overlayImageView.image = [s getImageWithBackgroundColor:[UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0] andRemovedColor:[UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0] andSwatchColorAlpha:0.0];
+    resultImageView.image = [dominantColors getImageWithBackgroundColor:[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:0.05] andRemovedColor:[UIColor colorWithRed:1.0 green:1.0 blue:0.0 alpha:0.05] andSwatchColorAlpha:1.0];
     
-    [s minimizeColorsWithDistanceThreshold:20.0];
+    [dominantColors minimizeColorsWithDistanceThreshold:20.0];
     
-    [s populateColorsIntoView:histView];
+    [dominantColors populateColorsIntoView:colorView];
+
+    startButton.enabled = YES;
+}
+
+- (void)setupView
+{
+    UIImage *testImage = [UIImage imageNamed:@"test-image.jpg"];
+    
+    imageView = [[UIImageView alloc] init];
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [imageView setImage:testImage];
+    
+    imageViewLabel = [[UILabel alloc] init];
+    imageViewLabel.text = @"Reference Image";
+    imageViewLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    imageViewLabel.textAlignment = NSTextAlignmentCenter;
+    
+    resultImageViewBackground = [[UIImageView alloc] init];
+    resultImageViewBackground.contentMode = UIViewContentModeScaleAspectFit;
+    [resultImageViewBackground setImage:testImage];
+    resultImageViewBackground.alpha = 0.1;
+
+    resultImageView = [[UIImageView alloc] init];
+    resultImageView.contentMode = UIViewContentModeScaleAspectFit;
+
+    resultImageViewLabel = [[UILabel alloc] init];
+    resultImageViewLabel.text = @"Foreground Isolated";
+    resultImageViewLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    resultImageViewLabel.textAlignment = NSTextAlignmentCenter;
+    
+    resultImageViewHelpLabel = [[UILabel alloc] init];
+    resultImageViewHelpLabel.numberOfLines = 0;
+    resultImageViewHelpLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    resultImageViewHelpLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    resultImageViewHelpLabel.text = @"RED - Background\nYELLOW - Foreground Removed by Skin Color Detection";
+    resultImageViewLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    
+    startButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [startButton setTitle:@"Find Dominant Foreground Colors" forState:UIControlStateNormal];
+    [startButton addTarget:self action:@selector(buttonPressed) forControlEvents:UIControlEventTouchUpInside];
+    
+    colorView = [[UIView alloc] init];
+    colorView.layer.borderColor = [UIColor blackColor].CGColor;
+    colorView.layer.borderWidth = 0.5;
+    colorView.layer.cornerRadius = 4.0;
+    colorView.clipsToBounds = YES;
+    
+    timeLabel = [[UILabel alloc] init];
+    timeLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.0];
+    timeLabel.textAlignment = NSTextAlignmentCenter;
+    timeLabel.text = @"";
+    
+    imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    imageViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    resultImageViewBackground.translatesAutoresizingMaskIntoConstraints = NO;
+    resultImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    resultImageViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    resultImageViewHelpLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    colorView.translatesAutoresizingMaskIntoConstraints = NO;
+    startButton.translatesAutoresizingMaskIntoConstraints = NO;
+    timeLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.view addSubview:imageView];
+    [self.view addSubview:imageViewLabel];
+    [self.view addSubview:resultImageViewBackground];
+    [self.view addSubview:resultImageView];
+    [self.view addSubview:resultImageViewLabel];
+    [self.view addSubview:resultImageViewHelpLabel];
+    [self.view addSubview:colorView];
+    [self.view addSubview:startButton];
+    [self.view addSubview:timeLabel];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[imageView]-8-[resultImageView(==imageView)]-8-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:NSDictionaryOfVariableBindings(imageView, resultImageView)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[imageViewLabel]-8-[resultImageViewLabel(==imageViewLabel)]-8-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:NSDictionaryOfVariableBindings(imageViewLabel, resultImageViewLabel)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[colorView]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(colorView)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[startButton]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(startButton)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[timeLabel]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(timeLabel)]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-30-[imageView]-8-[imageViewLabel]-4-[resultImageViewHelpLabel]-8-[startButton]-8-[colorView(30)]-8-[timeLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView, imageViewLabel, resultImageViewHelpLabel, startButton, colorView, timeLabel)]];
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:testImage.size.height / testImage.size.width constant:0.0]];
+
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0]];
+
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewHelpLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewHelpLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0]];
+
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0]];
 }
 
 @end
