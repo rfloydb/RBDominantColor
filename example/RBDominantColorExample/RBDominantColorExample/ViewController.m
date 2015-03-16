@@ -26,6 +26,11 @@
     UILabel *resultImageViewHelpLabel;
     UIButton *startButton;
 
+    UISlider *maxPixelsSlider;
+    UISlider *kMeansColorsSlider;
+    UISlider *minimizeColorsSlider;
+    UILabel *paramsLabel;
+    
     NSTimeInterval startTime;
     
     RBDominantColor *dominantColors;
@@ -35,9 +40,9 @@
 {
     [super viewDidLoad];
     
-    [self setupView];
-
     dominantColors = [[RBDominantColor alloc] init];
+
+    [self setupView];
 }
 
 - (void)buttonPressed
@@ -51,8 +56,8 @@
         [dominantColors markFace];
         [dominantColors markDefaultArea];
         [dominantColors grabCut];
-        [dominantColors kMeans:16];
-        [dominantColors minimizeColorsWithDistanceThreshold:20.0];
+        [dominantColors kMeans:int(kMeansColorsSlider.value)];
+        [dominantColors minimizeColorsWithDistanceThreshold:minimizeColorsSlider.value];
         
         [self performSelectorOnMainThread:@selector(setResultImage) withObject:nil waitUntilDone:NO];
     });
@@ -67,6 +72,27 @@
     [dominantColors populateColorsIntoView:colorView];
 
     startButton.enabled = YES;
+}
+
+- (void)setParamsLabelText
+{
+    paramsLabel.text = [NSString stringWithFormat:@"maxPixels: %d\nkMeans Colors: %d\nminimizeColors Distance: %.1f", dominantColors.maxPixels, int(kMeansColorsSlider.value), minimizeColorsSlider.value];;
+}
+
+- (void)maxPixelsChanged
+{
+    dominantColors.maxPixels = int(powf(10.0, maxPixelsSlider.value));
+    [self setParamsLabelText];
+}
+
+- (void)kMeansColorsChanged
+{
+    [self setParamsLabelText];
+}
+
+- (void)minimizeColorsChanged
+{
+    [self setParamsLabelText];
 }
 
 - (void)setupView
@@ -118,6 +144,33 @@
     timeLabel.textAlignment = NSTextAlignmentCenter;
     timeLabel.text = @"";
     
+    maxPixelsSlider = [[UISlider alloc] init];
+    maxPixelsSlider.maximumValue = log10f(3264 * 2448);
+    maxPixelsSlider.minimumValue = log10f(64 * 64);
+    maxPixelsSlider.value = log10f(dominantColors.maxPixels);
+    NSLog(@"%f/%f", maxPixelsSlider.value, maxPixelsSlider.maximumValue);
+    [maxPixelsSlider addTarget:self action:@selector(maxPixelsChanged) forControlEvents:UIControlEventValueChanged];
+
+    kMeansColorsSlider = [[UISlider alloc] init];
+    kMeansColorsSlider.maximumValue = 128;
+    kMeansColorsSlider.minimumValue = 2;
+    kMeansColorsSlider.value = 16;
+    [kMeansColorsSlider addTarget:self action:@selector(kMeansColorsChanged) forControlEvents:UIControlEventValueChanged];
+    
+    minimizeColorsSlider = [[UISlider alloc] init];
+    minimizeColorsSlider.maximumValue = 116;
+    minimizeColorsSlider.minimumValue = 0;
+    minimizeColorsSlider.value = 20;
+    [minimizeColorsSlider addTarget:self action:@selector(minimizeColorsChanged) forControlEvents:UIControlEventValueChanged];
+    
+    paramsLabel = [[UILabel alloc] init];
+    paramsLabel.numberOfLines = 0;
+    paramsLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    paramsLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    paramsLabel.textColor = [UIColor grayColor];
+    [self setParamsLabelText];
+    paramsLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+
     imageView.translatesAutoresizingMaskIntoConstraints = NO;
     imageViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
     resultImageViewBackground.translatesAutoresizingMaskIntoConstraints = NO;
@@ -127,6 +180,10 @@
     colorView.translatesAutoresizingMaskIntoConstraints = NO;
     startButton.translatesAutoresizingMaskIntoConstraints = NO;
     timeLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    maxPixelsSlider.translatesAutoresizingMaskIntoConstraints = NO;
+    kMeansColorsSlider.translatesAutoresizingMaskIntoConstraints = NO;
+    minimizeColorsSlider.translatesAutoresizingMaskIntoConstraints = NO;
+    paramsLabel.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self.view addSubview:imageView];
     [self.view addSubview:imageViewLabel];
@@ -137,14 +194,21 @@
     [self.view addSubview:colorView];
     [self.view addSubview:startButton];
     [self.view addSubview:timeLabel];
+    [self.view addSubview:maxPixelsSlider];
+    [self.view addSubview:kMeansColorsSlider];
+    [self.view addSubview:minimizeColorsSlider];
+    [self.view addSubview:paramsLabel];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[imageView]-8-[resultImageView(==imageView)]-8-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:NSDictionaryOfVariableBindings(imageView, resultImageView)]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[imageViewLabel]-8-[resultImageViewLabel(==imageViewLabel)]-8-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:NSDictionaryOfVariableBindings(imageViewLabel, resultImageViewLabel)]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[colorView]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(colorView)]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[startButton]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(startButton)]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[timeLabel]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(timeLabel)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[maxPixelsSlider]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(maxPixelsSlider)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[kMeansColorsSlider]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(kMeansColorsSlider)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-8-[minimizeColorsSlider]-8-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(minimizeColorsSlider)]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-30-[imageView]-8-[imageViewLabel]-4-[resultImageViewHelpLabel]-8-[startButton]-8-[colorView(30)]-8-[timeLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView, imageViewLabel, resultImageViewHelpLabel, startButton, colorView, timeLabel)]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-24-[imageView]-4-[imageViewLabel]-4-[resultImageViewHelpLabel]-4-[maxPixelsSlider]-4-[kMeansColorsSlider]-4-[minimizeColorsSlider]-4-[startButton]-4-[colorView(30)]-4-[timeLabel]" options:0 metrics:nil views:NSDictionaryOfVariableBindings(imageView, imageViewLabel, resultImageViewHelpLabel, maxPixelsSlider, kMeansColorsSlider, minimizeColorsSlider, startButton, colorView, timeLabel)]];
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:imageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:testImage.size.height / testImage.size.width constant:0.0]];
 
@@ -152,7 +216,11 @@
 
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewHelpLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewHelpLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0]];
-
+    
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:paramsLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:paramsLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:resultImageViewHelpLabel attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:paramsLabel attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:imageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0]];
+    
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0.0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0.0]];
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:resultImageViewBackground attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:resultImageView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0]];
