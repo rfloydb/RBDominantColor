@@ -381,8 +381,6 @@ static const NSUInteger swatchStatusKMeans = 3;
         s.kMeansLength = pixels - s.kMeansStartIndex;
     }
     
-    // can't have less pixels than colors
-    
     if (pixels < numColors) {
         numColors = pixels;
     }

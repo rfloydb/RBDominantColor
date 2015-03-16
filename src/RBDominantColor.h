@@ -25,8 +25,10 @@
 //
 // Note: You must call either markRect:, markDefaultArea, or markPoint:withRadius:isForeground:
 // at least once, otherwise the entire image will be considered background.
+//
 // markFace is a special case. Calling markFace will call the opencv face detection algorithm.
-// This is done in order to determine skin colors, which are *removed* from the foreground.
+// This is done in order to determine skin colors, which are *removed* from the foreground
+// before domainant colors are calculated.
 //
 - (BOOL)markFace;
 - (BOOL)markRect:(CGRect)rect;
@@ -57,12 +59,14 @@
 @property (nonatomic, readonly) NSArray *colorArray;
 
 //
-// DEBUG: Creates a UIImage with background and removed foreground (skin) colors marked with a given color, along with the colorArray colors being put into the image with alpha transparency.
+// DEBUG: Creates a UIImage with background and removed foreground (skin) colors marked with a given color,
+// along with the colorArray colors being put into the image with alpha transparency.
 //
 - (UIImage *)getImageWithBackgroundColor:(UIColor *)bgColor andRemovedColor:(UIColor *)removedColor andSwatchColorAlpha:(CGFloat)alpha;
 
 //
-// DEBUG: Provide a UIView, and it will empty out the UIView of subviews and add new subviews for each color.
+// DEBUG: Provide a UIView, and it will empty out the UIView of subviews
+// and add new subviews for each color.
 //
 - (void)populateColorsIntoView:(UIView *)v;
 

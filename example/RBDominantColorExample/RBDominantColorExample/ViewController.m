@@ -35,6 +35,8 @@
     RBDominantColor *dominantColors;
 }
 
+#pragma mark - RBDominantColor Example
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -72,6 +74,8 @@
 
     startButton.enabled = YES;
 }
+
+#pragma mark - User Interface
 
 - (void)setParamsLabelText
 {

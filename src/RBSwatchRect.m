@@ -115,30 +115,6 @@
     UIImageToMat(adjustedImage, _mat);
     
     cvtColor(_mat, _mat, CV_RGBA2RGB);
-    
-    /*
-     cvtColor(imageMat, imageMat, CV_RGB2HSV);
-     
-     //    cv::vector<cv::Mat> channels;
-     //    split(imageMat, channels);
-     //    equalizeHist(channels[2], channels[2]);
-     //    merge(channels, imageMat);
-     
-     int hSize[] = {255};
-     float r[] = {0, 256};
-     const float *hRange[] = {r};
-     int channels[] = {2};
-     
-     cv::MatND hist;
-     calcHist(&imageMat, 1, channels, cv::Mat(), hist, 1, hSize, hRange, true, false);
-     
-     for (int i = 0 ; i < 256 ; i++) {
-     float val = hist.at<float>(i);
-     NSLog(@"%3d: %f", i, val);
-     }
-     
-     cvtColor(imageMat, imageMat, CV_HSV2RGB);
-     */
 }
 
 - (void)grabCut
@@ -244,19 +220,6 @@
             }
         }
     }
-}
-
-- (void)logMatrix:(cv::Mat)M
-{
-    NSString *matrix = @"\n";
-    for (int i = 0 ; i < M.rows ; i++) {
-        matrix = [matrix stringByAppendingString:@"["];
-        for (int j = 0 ; j < M.cols ; j++) {
-            matrix = [matrix stringByAppendingString:[NSString stringWithFormat:@" %3d", M.at<int>(i, j)]];
-        }
-        matrix = [matrix stringByAppendingString:@" ]\n"];
-    }
-    NSLog(@"%@", matrix);
 }
 
 @end

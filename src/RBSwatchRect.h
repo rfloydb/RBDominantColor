@@ -14,6 +14,10 @@ static const CGFloat maskBorderPercent = 0.03;
 
 - (id)initWithImage:(UIImage *)image;
 - (void)grabCut;
+
+//
+// DEBUG: Used by getImageWithBackgroundColor:andRemovedColor:andSwatchColorAlpha:
+//
 - (void)kMeansMat:(cv::Mat)kMeansIndexes intoMat:(cv::Mat)imageMat withColors:(NSArray *)colors andRemovedColor:(UIColor *)removedColor andAlpha:(CGFloat)alpha;
 
 @property (nonatomic) CGRect rect;
