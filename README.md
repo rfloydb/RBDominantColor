@@ -1,5 +1,6 @@
 # RBDominantColor
-iOS tool for selecting the dominant colors in the foreground of an image using opencv.
+
+iOS tool for selecting the dominant colors in the foreground of an image using [opencv](http://opencv.org).
 
 It was developed as part of [kloz.it](http://kloz.it), for determining the color of clothing from photos.
 
@@ -43,6 +44,7 @@ Drag the src directory into your project. This should include the opencv framewo
 
 - (void)dominantColorsDone
 {
+	// colorArray is an array of UIColors representing the dominant colors
 	NSLog(@"%@", dominantColors.colorArray);
 
 	// DEBUG - Create an image or image overlay that shows where the background is,
