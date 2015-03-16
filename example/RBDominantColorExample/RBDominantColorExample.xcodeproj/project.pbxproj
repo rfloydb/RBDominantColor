@@ -253,7 +253,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/RBDominantColorExample",
-					/Users/rob/Desktop/RBDominantColor/src,
+					"$(PROJECT_DIR)/../../src",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -308,7 +308,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/RBDominantColorExample",
-					/Users/rob/Desktop/RBDominantColor/src,
+					"$(PROJECT_DIR)/../../src",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
@@ -350,6 +350,7 @@
 				D4F68C451AB220DB008A8926 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

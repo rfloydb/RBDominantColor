@@ -151,7 +151,6 @@
     maxPixelsSlider.maximumValue = log10f(3264 * 2448);
     maxPixelsSlider.minimumValue = log10f(64 * 64);
     maxPixelsSlider.value = log10f(dominantColors.maxPixels);
-    NSLog(@"%f/%f", maxPixelsSlider.value, maxPixelsSlider.maximumValue);
     [maxPixelsSlider addTarget:self action:@selector(maxPixelsChanged) forControlEvents:UIControlEventValueChanged];
 
     kMeansColorsSlider = [[UISlider alloc] init];
