@@ -4,6 +4,8 @@
 //  Based on MTColorDistance (https://github.com/mysterioustrousers/MTColorDistance)
 //
 
+#import <UIKit/UIKit.h>
+
 @interface UIColor (Distance)
 
 - (void)getL:(CGFloat *)L a:(CGFloat *)a b:(CGFloat *)b;

@@ -5,6 +5,8 @@
 
 // Extends the UIImage class to support resizing/cropping
 
+#import <UIKit/UIKit.h>
+
 @interface UIImage (Resize)
 
 - (UIImage *)croppedImage:(CGRect)bounds;

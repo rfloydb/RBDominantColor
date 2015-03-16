@@ -57,7 +57,7 @@
         [dominantColors markFace];
         [dominantColors markDefaultArea];
         [dominantColors grabCut];
-        [dominantColors kMeans:int(kMeansColorsSlider.value)];
+        [dominantColors kMeans:(int)kMeansColorsSlider.value];
         [dominantColors minimizeColorsWithDistanceThreshold:minimizeColorsSlider.value];
         
         [self performSelectorOnMainThread:@selector(setResultImage) withObject:nil waitUntilDone:NO];
@@ -79,12 +79,12 @@
 
 - (void)setParamsLabelText
 {
-    paramsLabel.text = [NSString stringWithFormat:@"maxPixels: %d\nkMeans Colors: %d\nminimizeColors Distance: %.1f", dominantColors.maxPixels, int(kMeansColorsSlider.value), minimizeColorsSlider.value];;
+    paramsLabel.text = [NSString stringWithFormat:@"maxPixels: %d\nkMeans Colors: %d\nminimizeColors Distance: %.1f", dominantColors.maxPixels, (int)kMeansColorsSlider.value, minimizeColorsSlider.value];;
 }
 
 - (void)maxPixelsChanged
 {
-    dominantColors.maxPixels = int(powf(10.0, maxPixelsSlider.value));
+    dominantColors.maxPixels = (int)powf(10.0, maxPixelsSlider.value);
     [self setParamsLabelText];
 }
 

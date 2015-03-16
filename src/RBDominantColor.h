@@ -3,6 +3,8 @@
 //  Created by Rob Brackett
 //
 
+#import <UIKit/UIKit.h>
+
 @interface RBDominantColor : NSObject
 
 //

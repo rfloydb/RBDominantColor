@@ -3,6 +3,9 @@
 //  Created by Rob Brackett
 //
 
+#import <UIKit/UIKit.h>
+#import <opencv2/opencv.hpp>
+
 //
 // This is how big the border around our marked areas should be.
 // Meaning, when you mark a rectangle, the rectangle *grows* by this percent,

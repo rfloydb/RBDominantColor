@@ -6,11 +6,7 @@ It was developed as part of [kloz.it](http://kloz.it), for determining the color
 
 ## Getting Started
 
-Drag the src directory into your project. This should include the opencv framework, the RBDominantColor code, and the xml file used for face detection.
-
-**Please Note:** RBDominantColor makes use of Objective C++, so you will need to change your build settings to compile your sources as Objective C++. This can be found under *Build Settings* -> *Apple LLVM - Language* -> *Compile Sources As*.
-
-*TODO:* Make this work using the default option (Compile Sources As = According to File Type).
+Drag the src directory into your project. This should include the opencv framework, the RBDominantColor code, and the xml file used for face detection. Your project probably already uses Foundation, CoreGraphics, and UIKit frameworks. If it does not, you will need to add those as well.
 
 ## Usage
 

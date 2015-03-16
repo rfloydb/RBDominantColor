@@ -3,6 +3,9 @@
 //  Created by Rob Brackett
 //
 
+#import <UIKit/UIKit.h>
+#import <opencv2/opencv.hpp>
+
 @interface RBSwatchColor : NSObject
 
 - (id)initWithColor:(UIColor *)color;
