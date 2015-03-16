@@ -17,8 +17,6 @@
 		D4F68C581AB24576008A8926 /* RBSwatchRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C511AB24576008A8926 /* RBSwatchRect.mm */; };
 		D4F68C591AB24576008A8926 /* UIColor+Distance.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C531AB24576008A8926 /* UIColor+Distance.m */; };
 		D4F68C5A1AB24576008A8926 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C551AB24576008A8926 /* UIImage+Resize.m */; };
-		D4F68C5E1AB245AB008A8926 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5B1AB245AB008A8926 /* CoreGraphics.framework */; };
-		D4F68C5F1AB245AB008A8926 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5C1AB245AB008A8926 /* Foundation.framework */; };
 		D4F68C601AB245AB008A8926 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5D1AB245AB008A8926 /* UIKit.framework */; };
 		D4F68C651AB24BA4008A8926 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C641AB24BA4008A8926 /* opencv2.framework */; };
 		D4F68C6D1AB77FBC008A8926 /* test-image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C6C1AB77FBC008A8926 /* test-image.jpg */; };
@@ -45,8 +43,6 @@
 		D4F68C531AB24576008A8926 /* UIColor+Distance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Distance.m"; path = "../../../src/UIColor+Distance.m"; sourceTree = "<group>"; };
 		D4F68C541AB24576008A8926 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Resize.h"; path = "../../../src/UIImage+Resize.h"; sourceTree = "<group>"; };
 		D4F68C551AB24576008A8926 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Resize.m"; path = "../../../src/UIImage+Resize.m"; sourceTree = "<group>"; };
-		D4F68C5B1AB245AB008A8926 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		D4F68C5C1AB245AB008A8926 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		D4F68C5D1AB245AB008A8926 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		D4F68C641AB24BA4008A8926 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../src/opencv2.framework; sourceTree = "<group>"; };
 		D4F68C6C1AB77FBC008A8926 /* test-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "test-image.jpg"; sourceTree = "<group>"; };
@@ -58,8 +54,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4F68C5E1AB245AB008A8926 /* CoreGraphics.framework in Frameworks */,
-				D4F68C5F1AB245AB008A8926 /* Foundation.framework in Frameworks */,
 				D4F68C651AB24BA4008A8926 /* opencv2.framework in Frameworks */,
 				D4F68C601AB245AB008A8926 /* UIKit.framework in Frameworks */,
 			);
@@ -107,8 +101,6 @@
 				D4F68C261AB220DB008A8926 /* Info.plist */,
 				D4F68C271AB220DB008A8926 /* main.m */,
 				D4F68C641AB24BA4008A8926 /* opencv2.framework */,
-				D4F68C5B1AB245AB008A8926 /* CoreGraphics.framework */,
-				D4F68C5C1AB245AB008A8926 /* Foundation.framework */,
 				D4F68C5D1AB245AB008A8926 /* UIKit.framework */,
 			);
 			name = "Supporting Files";
