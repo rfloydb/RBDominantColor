@@ -16,7 +16,7 @@ Drag the src directory into your project. This should include the opencv framewo
 
 ```objective-c
 
-- (void)doDominantColors
+- (void)findDominantColors
 {
 	dominantColors = [[RBDominantColor alloc] init];
 
