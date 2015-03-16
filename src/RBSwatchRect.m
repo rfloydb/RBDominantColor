@@ -229,7 +229,14 @@
             int colorIndex = smallMat.at<int>(kY, kX);
             if (colorIndex >= 0) {
                 RBSwatchColor *c = colors[colorIndex];
-                if (c.removedColor) {
+                if (c.mergedIntoColor) {
+                    do {
+                        c = c.mergedIntoColor;
+                    } while (c.mergedIntoColor);
+
+                    imageMat.at<cv::Vec4b>(bigRect.origin.y + y, bigRect.origin.x + x) = {c.red, c.green, c.blue, alphaU};
+
+                } else if (c.removedColor) {
                     imageMat.at<cv::Vec4b>(bigRect.origin.y + y, bigRect.origin.x + x) = {rcR, rcG, rcB, rcA};
                 } else {
                     imageMat.at<cv::Vec4b>(bigRect.origin.y + y, bigRect.origin.x + x) = {c.red, c.green, c.blue, alphaU};

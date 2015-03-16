@@ -624,6 +624,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
             colorToKeep.color = [UIColor colorWithLightness:L1 A:a1 B:b1 alpha:1.0];
             colorToKeep.pixels += colorToRemove.pixels;
             colorToRemove.removedColor = YES;
+            colorToRemove.mergedIntoColor = colorToKeep;
         }
         
     } while (didSomething);

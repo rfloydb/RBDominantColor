@@ -11,6 +11,7 @@
 @property (nonatomic) int pixels;
 @property (nonatomic) int colorRemovalPixels;
 @property (nonatomic) BOOL removedColor;
+@property (weak, nonatomic) RBSwatchColor *mergedIntoColor;
 
 @property (nonatomic) int importance; // 0 == removed, -1 == not set
 @property (nonatomic) NSUInteger minDistIndex;
