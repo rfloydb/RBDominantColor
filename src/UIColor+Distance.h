@@ -1,6 +1,7 @@
 //
 //  UIColor+Distance.h
 //  Created by Rob Brackett
+//  Based on MTColorDistance (https://github.com/mysterioustrousers/MTColorDistance)
 //
 
 @interface UIColor (Distance)

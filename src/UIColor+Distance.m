@@ -1,6 +1,7 @@
 //
 //  UIColor+Distance.m
 //  Created by Rob Brackett
+//  Based on MTColorDistance (https://github.com/mysterioustrousers/MTColorDistance)
 //
 
 #import "UIColor+Distance.h"
@@ -40,7 +41,6 @@
 
 - (CGFloat)distanceToColor:(UIColor *)color
 {
-    // whatever is called here should normalize to 0-100 scale
     return [self distanceToColorLAB:color];
 }
 

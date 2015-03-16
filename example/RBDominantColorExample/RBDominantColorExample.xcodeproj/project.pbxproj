@@ -21,8 +21,8 @@
 		D4F68C5F1AB245AB008A8926 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5C1AB245AB008A8926 /* Foundation.framework */; };
 		D4F68C601AB245AB008A8926 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5D1AB245AB008A8926 /* UIKit.framework */; };
 		D4F68C651AB24BA4008A8926 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C641AB24BA4008A8926 /* opencv2.framework */; };
-		D4F68C671AB2519F008A8926 /* test-image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C661AB2519F008A8926 /* test-image.jpg */; };
-		D4F68C691AB25FFA008A8926 /* haarcascade_frontalface_alt.xml in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C681AB25FFA008A8926 /* haarcascade_frontalface_alt.xml */; };
+		D4F68C6D1AB77FBC008A8926 /* test-image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C6C1AB77FBC008A8926 /* test-image.jpg */; };
+		D4F68C771AB78126008A8926 /* haarcascade_frontalface_alt.xml in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C761AB78126008A8926 /* haarcascade_frontalface_alt.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,8 +50,8 @@
 		D4F68C5D1AB245AB008A8926 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		D4F68C611AB24654008A8926 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		D4F68C641AB24BA4008A8926 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = ../../../src/opencv2.framework; sourceTree = "<group>"; };
-		D4F68C661AB2519F008A8926 /* test-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "test-image.jpg"; sourceTree = "<group>"; };
-		D4F68C681AB25FFA008A8926 /* haarcascade_frontalface_alt.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = haarcascade_frontalface_alt.xml; sourceTree = "<group>"; };
+		D4F68C6C1AB77FBC008A8926 /* test-image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "test-image.jpg"; sourceTree = "<group>"; };
+		D4F68C761AB78126008A8926 /* haarcascade_frontalface_alt.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = haarcascade_frontalface_alt.xml; path = ../../../src/haarcascade_frontalface_alt.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,8 +101,8 @@
 		D4F68C251AB220DB008A8926 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D4F68C681AB25FFA008A8926 /* haarcascade_frontalface_alt.xml */,
-				D4F68C661AB2519F008A8926 /* test-image.jpg */,
+				D4F68C761AB78126008A8926 /* haarcascade_frontalface_alt.xml */,
+				D4F68C6C1AB77FBC008A8926 /* test-image.jpg */,
 				D4F68C321AB220DB008A8926 /* Images.xcassets */,
 				D4F68C491AB2231A008A8926 /* Default-568h@2x.png */,
 				D4F68C261AB220DB008A8926 /* Info.plist */,
@@ -189,9 +189,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4F68C771AB78126008A8926 /* haarcascade_frontalface_alt.xml in Resources */,
+				D4F68C6D1AB77FBC008A8926 /* test-image.jpg in Resources */,
 				D4F68C331AB220DB008A8926 /* Images.xcassets in Resources */,
-				D4F68C671AB2519F008A8926 /* test-image.jpg in Resources */,
-				D4F68C691AB25FFA008A8926 /* haarcascade_frontalface_alt.xml in Resources */,
 				D4F68C4A1AB2231A008A8926 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

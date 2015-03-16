@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "RBDominantColor.h"
-#import "UIColor+Distance.h"
 
 @interface ViewController ()
 
