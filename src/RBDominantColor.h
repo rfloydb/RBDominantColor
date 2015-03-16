@@ -15,6 +15,12 @@
 @property (nonatomic) UIImage *image;
 
 //
+// Step 1a (optional): Set the max pixels to use in analysis.
+// Setting it higher causes the algorithm to take longer to run, but might give better results.
+//
+@property (nonatomic) int maxPixels;
+
+//
 // Step 2: Mark areas as belonging to foreground
 //
 // Note: You must call either markRect:, markDefaultArea, or markPoint:withRadius:isForeground:
@@ -38,7 +44,7 @@
 - (void)kMeans:(int)colors;
 
 //
-// Step 5: Further reduce colors by eliminating colors that are close to one another
+// Step 5 (optional): Further reduce colors by eliminating colors that are close to one another
 // Color distance should lie between 0 and 116 (116 = CIE94 distance between black and white)
 //
 - (void)minimizeColorsWithDistanceThreshold:(CGFloat)distance;

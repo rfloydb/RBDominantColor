@@ -13,7 +13,7 @@
 // This is the target image size to analyze after removing the irrelevant parts.
 // Smaller number means faster analysis.
 //
-static const int workingImageMaxPixels = 30000;
+static const int workingImageMaxPixelsDefault = 30000;
 
 //
 // These are percentages of the smaller dimension of the original image.
@@ -45,7 +45,6 @@ static const NSUInteger swatchStatusInit = 0;
 static const NSUInteger swatchStatusImageSet = 1;
 static const NSUInteger swatchStatusGrabCut = 2;
 static const NSUInteger swatchStatusKMeans = 3;
-static const NSUInteger swatchStatusColorImportance = 3;
 
 @implementation RBDominantColor {
     cv::CascadeClassifier faceDetector;
@@ -63,6 +62,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     self = [super init];
     if (self) {
         status = swatchStatusInit;
+        self.maxPixels = workingImageMaxPixelsDefault;
     }
     return self;
 }
@@ -257,7 +257,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         return NSOrderedSame;
     }];
     
-    int remainingPixels = workingImageMaxPixels;
+    int remainingPixels = self.maxPixels;
     
     for (int i = 0 ; i < sorted.count ; i++) {
         RBSwatchRect *s = sorted[i];
@@ -483,11 +483,6 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 - (void)setColorImportance
 {
-    if (status != swatchStatusKMeans) {
-        NSLog(@"Can't run setColorImportance until kMeans has been run.");
-        return;
-    }
-    
     for (int iter = 0 ; iter < colors.count ; iter++) {
         for (int i = 0 ; i < colors.count ; i++) {
             [self findMinDist:i];
@@ -515,17 +510,10 @@ static const NSUInteger swatchStatusColorImportance = 3;
             break;
         }
     }
-    
-    status = swatchStatusColorImportance;
 }
 
 - (CGFloat)colorPercent:(RBSwatchColor *)c minPercent:(CGFloat)minPercent
 {
-    if (status != swatchStatusColorImportance) {
-        NSLog(@"Can't run colorPercent until minimizeColorsWithDistanceThreshold has been run.");
-        return 0;
-    }
-    
     int index = (int)[colors indexOfObject:c];
     int hist[colors.count];
     int pixels = 0;
@@ -628,8 +616,6 @@ static const NSUInteger swatchStatusColorImportance = 3;
         }
         
     } while (didSomething);
-    
-    status = swatchStatusColorImportance;
 }
 
 #pragma mark - Step 6 - Read colorArray
@@ -721,8 +707,8 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 - (void)populateColorsIntoView:(UIView *)v
 {
-    if (status != swatchStatusColorImportance) {
-        NSLog(@"Can't run populateColorsIntoView until minimizeColorsWithDistanceThreshold has been run.");
+    if (status != swatchStatusKMeans) {
+        NSLog(@"Can't run populateColorsIntoView until kMeans has been run.");
         return;
     }
     
