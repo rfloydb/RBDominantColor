@@ -2,7 +2,7 @@
 
 iOS tool for selecting the dominant colors in the foreground of an image using [opencv](http://opencv.org).
 
-It was developed as part of [kloz.it](http://kloz.it), for determining the color of clothing from photos.
+It was developed as part of [kloz.it](http://kloz.it), for determining the color of clothing from photos. It should be considered alpha code at this point, inasmuch as it only hits the mark about 60-80% of the time. There are many potential areas to optimize this algorithm to make it smarter.
 
 ## Getting Started
 
