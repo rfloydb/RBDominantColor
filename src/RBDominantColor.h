@@ -52,9 +52,7 @@
 - (void)minimizeColorsWithDistanceThreshold:(CGFloat)distance;
 
 //
-// Step 6: The resulting list of colors is stored in colorArray
-//
-// Note: Each item is a SwatchColor. SwatchColor has a "color" property that is a UIColor.
+// Step 6: The resulting list of UIColors is stored in colorArray
 //
 @property (nonatomic, readonly) NSArray *colorArray;
 
