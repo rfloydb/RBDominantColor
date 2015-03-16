@@ -4,7 +4,8 @@
 //
 
 #import "RBDominantColor.h"
-#import "SwatchRect.h"
+#import "RBSwatchColor.h"
+#import "RBSwatchRect.h"
 #import "opencv2/highgui/ios.h"
 #import "UIColor+Distance.h"
 
@@ -136,7 +137,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         r.height = MIN(self.image.size.height - r.y, r.height + growH);
         
         if (r.width * r.height > 0) {
-            SwatchRect *mask = [[SwatchRect alloc] initWithImage:self.image];
+            RBSwatchRect *mask = [[RBSwatchRect alloc] initWithImage:self.image];
             mask.rect = CGRectMake(r.x, r.y, r.width, r.height);
             mask.useForColorRemoval = YES;
             
@@ -170,7 +171,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     }
     
     if (rect.size.width * rect.size.height > 0) {
-        SwatchRect *mask = [[SwatchRect alloc] initWithImage:self.image];
+        RBSwatchRect *mask = [[RBSwatchRect alloc] initWithImage:self.image];
         mask.rect = rect;
         
         [marked addObject:mask];
@@ -198,7 +199,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         return NO;
     }
     
-    SwatchRect *mask = [[SwatchRect alloc] initWithImage:self.image];
+    RBSwatchRect *mask = [[RBSwatchRect alloc] initWithImage:self.image];
     CGRect rect = CGRectMake(mask.borderSize, mask.borderSize, self.image.size.width - 2 * mask.borderSize, self.image.size.height - 2 * mask.borderSize);
     
     if (rect.size.width > 0 && rect.size.height > 0) {
@@ -231,7 +232,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     
     CGRect rect = CGRectMake(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
     
-    SwatchRect *mask = [[SwatchRect alloc] initWithImage:self.image];
+    RBSwatchRect *mask = [[RBSwatchRect alloc] initWithImage:self.image];
     mask.rect = rect;
     
     // if we are hardcoding this selection to foreground, then the entire rect should be foreground
@@ -247,7 +248,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 - (void)setReducePercentOnMarkedAreas
 {
-    NSArray *sorted = [marked sortedArrayUsingComparator:^NSComparisonResult(SwatchRect *obj1, SwatchRect *obj2) {
+    NSArray *sorted = [marked sortedArrayUsingComparator:^NSComparisonResult(RBSwatchRect *obj1, RBSwatchRect *obj2) {
         if (obj1.pixels < obj2.pixels) {
             return NSOrderedAscending;
         } else if (obj1.pixels > obj2.pixels) {
@@ -259,7 +260,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     int remainingPixels = workingImageMaxPixels;
     
     for (int i = 0 ; i < sorted.count ; i++) {
-        SwatchRect *s = sorted[i];
+        RBSwatchRect *s = sorted[i];
         
         int pixelTarget = remainingPixels / (sorted.count - i);
         
@@ -294,7 +295,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     
     status = swatchStatusGrabCut;
     
-    for (SwatchRect *s in marked) {
+    for (RBSwatchRect *s in marked) {
         [s grabCut];
     }
 }
@@ -305,10 +306,10 @@ static const NSUInteger swatchStatusColorImportance = 3;
 {
     // initialize the colors
     
-    for (SwatchRect *s in marked) {
+    for (RBSwatchRect *s in marked) {
         for (int i = 0 ; i < s.kMeansLength ; i++) {
             int colorIndex = kMeansColorIndexes.at<int>(s.kMeansStartIndex + i, 0);
-            SwatchColor *c = colors[colorIndex];
+            RBSwatchColor *c = colors[colorIndex];
             
             if (s.useForColorRemoval) {
                 c.colorRemovalPixels++;
@@ -318,7 +319,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         }
     }
     
-    NSArray *sortedForRemoval = [colors sortedArrayUsingComparator:^NSComparisonResult(SwatchColor *obj1, SwatchColor *obj2) {
+    NSArray *sortedForRemoval = [colors sortedArrayUsingComparator:^NSComparisonResult(RBSwatchColor *obj1, RBSwatchColor *obj2) {
         if (obj1.colorRemovalPixels > obj2.colorRemovalPixels) {
             return NSOrderedAscending;
             
@@ -337,13 +338,13 @@ static const NSUInteger swatchStatusColorImportance = 3;
     }];
     
     NSMutableArray *removalColors = [NSMutableArray arrayWithCapacity:MAX(1, sortedForRemoval.count * faceColorRemovalPercent)];
-    for (SwatchColor *c in [sortedForRemoval subarrayWithRange:NSMakeRange(0, MAX(1, sortedForRemoval.count * faceColorRemovalPercent))]) {
+    for (RBSwatchColor *c in [sortedForRemoval subarrayWithRange:NSMakeRange(0, MAX(1, sortedForRemoval.count * faceColorRemovalPercent))]) {
         if (c.colorRemovalPixels > 0) {
             [removalColors addObject:c.color];
         }
     }
     
-    for (SwatchColor *c in colors) {
+    for (RBSwatchColor *c in colors) {
         CGFloat d = [c.color closestDistanceInPalette:removalColors];
         if (d <= faceColorRemovalStep2Distance) {
             c.removedColor = YES;
@@ -362,7 +363,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     status = swatchStatusKMeans;
     
     int pixels = 0;
-    for (SwatchRect *s in marked) {
+    for (RBSwatchRect *s in marked) {
         s.kMeansStartIndex = -1;
         
         for (int y = 0 ; y < s.mask.rows ; y++ ) {
@@ -391,7 +392,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     cv::Mat samples(pixels, 3, CV_32F);
     
     int pixel = 0;
-    for (SwatchRect *s in marked) {
+    for (RBSwatchRect *s in marked) {
         for (int y = 0 ; y < s.mask.rows ; y++ ) {
             for (int x = 0 ; x < s.mask.cols ; x++) {
                 if (s.mask.at<uchar>(y, x) & 1) {
@@ -417,7 +418,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     
     colors = [NSMutableArray arrayWithCapacity:centers.rows];
     for (int i = 0 ; i < centers.rows ; i++) {
-        colors[i] = [[SwatchColor alloc] initWithColor:[UIColor colorWithRed:centers.at<float>(i, 0) / 255 green:centers.at<float>(i, 1) / 255 blue:centers.at<float>(i, 2) / 255 alpha:1.0]];
+        colors[i] = [[RBSwatchColor alloc] initWithColor:[UIColor colorWithRed:centers.at<float>(i, 0) / 255 green:centers.at<float>(i, 1) / 255 blue:centers.at<float>(i, 2) / 255 alpha:1.0]];
     }
     
     [self processColors];
@@ -427,7 +428,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 - (NSArray *)sortedColorArray
 {
-    return [colors sortedArrayUsingComparator:^NSComparisonResult(SwatchColor *obj1, SwatchColor *obj2) {
+    return [colors sortedArrayUsingComparator:^NSComparisonResult(RBSwatchColor *obj1, RBSwatchColor *obj2) {
         if (obj1.removedColor < obj2.removedColor) {
             return NSOrderedAscending;
         } else if (obj1.removedColor > obj2.removedColor) {
@@ -451,7 +452,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 - (void)findMinDist:(NSUInteger)i
 {
-    SwatchColor *c = colors[i];
+    RBSwatchColor *c = colors[i];
     
     if (c.importance != -1) {
         return;
@@ -462,7 +463,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     
     NSUInteger I = 0;
     while (I < colors.count) {
-        SwatchColor *C = colors[I];
+        RBSwatchColor *C = colors[I];
         
         if (C.importance == -1) {
             CGFloat d = [c.color distanceToColor:C.color];
@@ -495,7 +496,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         CGFloat minCost = -1;
         int minIndex = -1;
         for (int i = 0 ; i < colors.count ; i++) {
-            SwatchColor *c = colors[i];
+            RBSwatchColor *c = colors[i];
             
             if (c.importance == -1) {
                 CGFloat cost = c.pixels * c.minDist;
@@ -507,7 +508,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         }
         
         if (minIndex > -1) {
-            SwatchColor *c = colors[minIndex];
+            RBSwatchColor *c = colors[minIndex];
             c.importance = iter + 1; // zero is for removed colors
             
         } else {
@@ -518,7 +519,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     status = swatchStatusColorImportance;
 }
 
-- (CGFloat)colorPercent:(SwatchColor *)c minPercent:(CGFloat)minPercent
+- (CGFloat)colorPercent:(RBSwatchColor *)c minPercent:(CGFloat)minPercent
 {
     if (status != swatchStatusColorImportance) {
         NSLog(@"Can't run colorPercent until minimizeColorsWithDistanceThreshold has been run.");
@@ -530,7 +531,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     int pixels = 0;
     
     int i = 0;
-    for (SwatchColor *c in colors) {
+    for (RBSwatchColor *c in colors) {
         if (!c.removedColor) {
             pixels += c.pixels;
             hist[i] = c.pixels;
@@ -550,7 +551,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         int stealingPool = 0;
         
         int i = 0;
-        for (SwatchColor *c in colors) {
+        for (RBSwatchColor *c in colors) {
             if (!c.removedColor) {
                 if (c.pixels < minPixels) {
                     pixelsToSteal += minPixels - c.pixels;
@@ -564,7 +565,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         
         if (pixelsToSteal > 0) {
             int i = 0;
-            for (SwatchColor *c in colors) {
+            for (RBSwatchColor *c in colors) {
                 if (!c.removedColor && c.pixels > minPixels) {
                     hist[i] -= (CGFloat)pixelsToSteal * (CGFloat)(hist[i] - minPixels) / (CGFloat)stealingPool;
                 }
@@ -590,8 +591,8 @@ static const NSUInteger swatchStatusColorImportance = 3;
         [self setColorImportance];
         NSArray *sorted = [self sortedColorArray];
         
-        SwatchColor *colorToRemove;
-        for (SwatchColor *c in sorted) {
+        RBSwatchColor *colorToRemove;
+        for (RBSwatchColor *c in sorted) {
             if (c.minDist > distance || c.removedColor) {
                 continue;
             }
@@ -603,7 +604,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         if (colorToRemove) {
             didSomething = YES;
             
-            SwatchColor *colorToKeep = colors[colorToRemove.minDistIndex];
+            RBSwatchColor *colorToKeep = colors[colorToRemove.minDistIndex];
             
             CGFloat L1, L2, a1, a2, b1, b2;
             [colorToKeep.color getL:&L1 a:&a1 b:&b1];
@@ -637,7 +638,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     NSArray *sorted = [self sortedColorArray];
     
     NSMutableArray *temp = [NSMutableArray array];
-    for (SwatchColor *c in sorted) {
+    for (RBSwatchColor *c in sorted) {
         if (c.removedColor) {
             continue;
         }
@@ -706,7 +707,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         }
     }
     
-    for (SwatchRect *r in marked) {
+    for (RBSwatchRect *r in marked) {
         [r kMeansMat:kMeansColorIndexes intoMat:newImage withColors:colors andRemovedColor:removedColor andAlpha:alpha];
     }
     
@@ -733,7 +734,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     NSArray *sorted = [self sortedColorArray];
     
     int numColors = 0;
-    for (SwatchColor *c in sorted) {
+    for (RBSwatchColor *c in sorted) {
         if (c.removedColor) {
             continue;
         }
@@ -746,7 +747,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
     }
     
     CGFloat progress = 0;
-    for (SwatchColor *c in sorted) {
+    for (RBSwatchColor *c in sorted) {
         if (c.removedColor) {
             continue;
         }

@@ -3,10 +3,10 @@
 //  Created by Rob Brackett
 //
 
-#import "SwatchColor.h"
+#import "RBSwatchColor.h"
 #import "UIColor+Distance.h"
 
-@implementation SwatchColor {
+@implementation RBSwatchColor {
     uchar cachedRed;
     uchar cachedGreen;
     uchar cachedBlue;

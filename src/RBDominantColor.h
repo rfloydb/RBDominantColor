@@ -3,8 +3,6 @@
 //  Created by Rob Brackett
 //
 
-#import "SwatchColor.h"
-
 @interface RBDominantColor : NSObject
 
 //

@@ -13,8 +13,8 @@
 		D4F68C331AB220DB008A8926 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C321AB220DB008A8926 /* Images.xcassets */; };
 		D4F68C4A1AB2231A008A8926 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D4F68C491AB2231A008A8926 /* Default-568h@2x.png */; };
 		D4F68C561AB24576008A8926 /* RBDominantColor.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C4D1AB24576008A8926 /* RBDominantColor.m */; };
-		D4F68C571AB24576008A8926 /* SwatchColor.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C4F1AB24576008A8926 /* SwatchColor.m */; };
-		D4F68C581AB24576008A8926 /* SwatchRect.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C511AB24576008A8926 /* SwatchRect.m */; };
+		D4F68C571AB24576008A8926 /* RBSwatchColor.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C4F1AB24576008A8926 /* RBSwatchColor.m */; };
+		D4F68C581AB24576008A8926 /* RBSwatchRect.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C511AB24576008A8926 /* RBSwatchRect.m */; };
 		D4F68C591AB24576008A8926 /* UIColor+Distance.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C531AB24576008A8926 /* UIColor+Distance.m */; };
 		D4F68C5A1AB24576008A8926 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F68C551AB24576008A8926 /* UIImage+Resize.m */; };
 		D4F68C5E1AB245AB008A8926 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4F68C5B1AB245AB008A8926 /* CoreGraphics.framework */; };
@@ -37,10 +37,10 @@
 		D4F68C491AB2231A008A8926 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		D4F68C4C1AB24575008A8926 /* RBDominantColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RBDominantColor.h; path = ../../../src/RBDominantColor.h; sourceTree = "<group>"; };
 		D4F68C4D1AB24576008A8926 /* RBDominantColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RBDominantColor.m; path = ../../../src/RBDominantColor.m; sourceTree = "<group>"; };
-		D4F68C4E1AB24576008A8926 /* SwatchColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwatchColor.h; path = ../../../src/SwatchColor.h; sourceTree = "<group>"; };
-		D4F68C4F1AB24576008A8926 /* SwatchColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SwatchColor.m; path = ../../../src/SwatchColor.m; sourceTree = "<group>"; };
-		D4F68C501AB24576008A8926 /* SwatchRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwatchRect.h; path = ../../../src/SwatchRect.h; sourceTree = "<group>"; };
-		D4F68C511AB24576008A8926 /* SwatchRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SwatchRect.m; path = ../../../src/SwatchRect.m; sourceTree = "<group>"; };
+		D4F68C4E1AB24576008A8926 /* RBSwatchColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RBSwatchColor.h; path = ../../../src/RBSwatchColor.h; sourceTree = "<group>"; };
+		D4F68C4F1AB24576008A8926 /* RBSwatchColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RBSwatchColor.m; path = ../../../src/RBSwatchColor.m; sourceTree = "<group>"; };
+		D4F68C501AB24576008A8926 /* RBSwatchRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RBSwatchRect.h; path = ../../../src/RBSwatchRect.h; sourceTree = "<group>"; };
+		D4F68C511AB24576008A8926 /* RBSwatchRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RBSwatchRect.m; path = ../../../src/RBSwatchRect.m; sourceTree = "<group>"; };
 		D4F68C521AB24576008A8926 /* UIColor+Distance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Distance.h"; path = "../../../src/UIColor+Distance.h"; sourceTree = "<group>"; };
 		D4F68C531AB24576008A8926 /* UIColor+Distance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Distance.m"; path = "../../../src/UIColor+Distance.m"; sourceTree = "<group>"; };
 		D4F68C541AB24576008A8926 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Resize.h"; path = "../../../src/UIImage+Resize.h"; sourceTree = "<group>"; };
@@ -121,10 +121,10 @@
 			children = (
 				D4F68C4C1AB24575008A8926 /* RBDominantColor.h */,
 				D4F68C4D1AB24576008A8926 /* RBDominantColor.m */,
-				D4F68C4E1AB24576008A8926 /* SwatchColor.h */,
-				D4F68C4F1AB24576008A8926 /* SwatchColor.m */,
-				D4F68C501AB24576008A8926 /* SwatchRect.h */,
-				D4F68C511AB24576008A8926 /* SwatchRect.m */,
+				D4F68C4E1AB24576008A8926 /* RBSwatchColor.h */,
+				D4F68C4F1AB24576008A8926 /* RBSwatchColor.m */,
+				D4F68C501AB24576008A8926 /* RBSwatchRect.h */,
+				D4F68C511AB24576008A8926 /* RBSwatchRect.m */,
 				D4F68C521AB24576008A8926 /* UIColor+Distance.h */,
 				D4F68C531AB24576008A8926 /* UIColor+Distance.m */,
 				D4F68C541AB24576008A8926 /* UIImage+Resize.h */,
@@ -208,9 +208,9 @@
 				D4F68C2E1AB220DB008A8926 /* ViewController.m in Sources */,
 				D4F68C561AB24576008A8926 /* RBDominantColor.m in Sources */,
 				D4F68C2B1AB220DB008A8926 /* AppDelegate.m in Sources */,
-				D4F68C571AB24576008A8926 /* SwatchColor.m in Sources */,
+				D4F68C571AB24576008A8926 /* RBSwatchColor.m in Sources */,
 				D4F68C281AB220DB008A8926 /* main.m in Sources */,
-				D4F68C581AB24576008A8926 /* SwatchRect.m in Sources */,
+				D4F68C581AB24576008A8926 /* RBSwatchRect.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,12 +3,12 @@
 //  Created by Rob Brackett
 //
 
-#import "SwatchRect.h"
+#import "RBSwatchRect.h"
 #import "UIImage+Resize.h"
 #import "opencv2/highgui/ios.h"
-#import "SwatchColor.h"
+#import "RBSwatchColor.h"
 
-@implementation SwatchRect {
+@implementation RBSwatchRect {
     UIImage *bigImage;
     UIImage *adjustedImage;
     
@@ -228,7 +228,7 @@
             
             int colorIndex = smallMat.at<int>(kY, kX);
             if (colorIndex >= 0) {
-                SwatchColor *c = colors[colorIndex];
+                RBSwatchColor *c = colors[colorIndex];
                 if (c.removedColor) {
                     imageMat.at<cv::Vec4b>(bigRect.origin.y + y, bigRect.origin.x + x) = {rcR, rcG, rcB, rcA};
                 } else {

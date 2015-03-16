@@ -10,7 +10,7 @@
 //
 static const CGFloat maskBorderPercent = 0.03;
 
-@interface SwatchRect : NSObject
+@interface RBSwatchRect : NSObject
 
 - (id)initWithImage:(UIImage *)image;
 - (void)grabCut;

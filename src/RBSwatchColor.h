@@ -3,7 +3,7 @@
 //  Created by Rob Brackett
 //
 
-@interface SwatchColor : NSObject
+@interface RBSwatchColor : NSObject
 
 - (id)initWithColor:(UIColor *)color;
 
