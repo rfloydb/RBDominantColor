@@ -7,10 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "opencv2/highgui/ios.h"
 #import "RBDominantColor.h"
-#import "SwatchColor.h"
-#import "UIImage+Resize.h"
+#import "UIColor+Distance.h"
 
 @interface ViewController ()
 
@@ -38,7 +36,7 @@
     [super viewDidLoad];
     
     [self setupView];
-    
+
     dominantColors = [[RBDominantColor alloc] init];
 }
 
@@ -102,6 +100,7 @@
     resultImageViewHelpLabel.numberOfLines = 0;
     resultImageViewHelpLabel.lineBreakMode = NSLineBreakByWordWrapping;
     resultImageViewHelpLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
+    resultImageViewHelpLabel.textColor = [UIColor grayColor];
     resultImageViewHelpLabel.text = @"RED - Background\nYELLOW - Foreground Removed by Skin Color Detection";
     resultImageViewLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:10.0];
     

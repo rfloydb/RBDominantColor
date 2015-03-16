@@ -41,7 +41,7 @@
 
 //
 // Step 5: Further reduce colors by eliminating colors that are close to one another
-// Color distance should lie between 0 and 100
+// Color distance should lie between 0 and 116 (116 = CIE94 distance between black and white)
 //
 - (void)minimizeColorsWithDistanceThreshold:(CGFloat)distance;
 

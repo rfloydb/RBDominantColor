@@ -8,14 +8,35 @@
 #import "opencv2/highgui/ios.h"
 #import "UIColor+Distance.h"
 
-// these are percentages of the smaller dimension of the original image
+//
+// This is the target image size to analyze after removing the irrelevant parts.
+// Smaller number means faster analysis.
+//
+static const int workingImageMaxPixels = 30000;
+
+//
+// These are percentages of the smaller dimension of the original image.
+//
+// Example: If minFacePercent = 0.1 and maxFacePercent = 0.5, it means
+// a face should be 10-50% the width of a portrait-oriented image.
+//
 static const CGFloat minFacePercent = 0.05;
 static const CGFloat maxFacePercent = 0.25;
 
-// this shrinks the face to try to avoid getting hair in there for color analysis
+//
+// This shrinks the face area to try to avoid getting hair in there for color analysis.
+//
 static const CGFloat faceGrowPercent = -0.25;
 
-// this is the threshold of colors to remove -- it is a percentage of colors passed to kmeans, not a percentage of pixels
+//
+// These are thresholds of colors to remove.
+//
+// Example: If faceColorRemovalPercent = 0.5, it means it will remove the top 50% of colors
+// found in the face, by pixel count (after kMeans has run).
+//
+// Example: If faceColorRemovalStep2Distance = 10.0, it will remove any colors which have
+// a distance of 10 or less to a face color
+//
 static const CGFloat faceColorRemovalPercent = 1.0;
 static const CGFloat faceColorRemovalStep2Distance = 0.0;
 
@@ -280,7 +301,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
 
 #pragma mark - Step 4 - Run kMeans
 
-- (void)setupColors
+- (void)processColors
 {
     // initialize the colors
     
@@ -399,7 +420,7 @@ static const NSUInteger swatchStatusColorImportance = 3;
         colors[i] = [[SwatchColor alloc] initWithColor:[UIColor colorWithRed:centers.at<float>(i, 0) / 255 green:centers.at<float>(i, 1) / 255 blue:centers.at<float>(i, 2) / 255 alpha:1.0]];
     }
     
-    [self setupColors];
+    [self processColors];
 }
 
 #pragma mark - Step 5 - Color Minimization

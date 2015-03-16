@@ -3,10 +3,11 @@
 //  Created by Rob Brackett
 //
 
-// this is the target image size to analyze after removing the irrelevant parts
-static const int workingImageMaxPixels = 30000;
-
-// this is how big the border around our marked areas should be
+//
+// This is how big the border around our marked areas should be.
+// Meaning, when you mark a rectangle, the rectangle *grows* by this percent,
+// and the outer border will be marked as background.
+//
 static const CGFloat maskBorderPercent = 0.03;
 
 @interface SwatchRect : NSObject
