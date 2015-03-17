@@ -23,19 +23,20 @@ RBDominantColor *dominantColors;
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         [dominantColors setImage:[UIImage imageNamed:@"test-image.jpg"]];
         
-        // OPTIONAL: Ignore Skin
+        // OPTIONAL: Call this to ignore skin in the foreground
         [dominantColors markFace];
         
-        // Use this OR markRect: OR markPoint:withRadius:isForeground: if you know where the foreground is already
+        // Use markDefaultArea if you don't know where the foreground is in the image
+        // Use markRect: or markPoint:withRadius:isForeground: if you know where the foreground is already
         [dominantColors markDefaultArea];
         
         // Remove Background
         [dominantColors grabCut];
         
-        // Reduce Colors
+        // Reduce colors to 16
         [dominantColors kMeans:16];
         
-        // Eliminate Similar Colors
+        // Eliminate similar colors
         [dominantColors minimizeColorsWithDistanceThreshold:20.0];
         
         [self performSelectorOnMainThread:@selector(dominantColorsDone) withObject:nil waitUntilDone:NO];
