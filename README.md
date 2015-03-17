@@ -21,7 +21,14 @@ RBDominantColor *dominantColors;
     dominantColors = [[RBDominantColor alloc] init];
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [dominantColors setImage:[UIImage imageNamed:@"test-image.jpg"]];
+        // Provide RBDominantColors with an image
+        UIImage *image = [UIImage imageNamed:@"test-image.jpg"];
+        if (image) {
+            [dominantColors setImage:image];
+        } else {
+            NSLog(@"Make sure to provide RBDominantColors with an image.");
+            exit(-1);
+        }
         
         // OPTIONAL: Call this to ignore skin in the foreground
         [dominantColors markFace];
