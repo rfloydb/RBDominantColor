@@ -12,40 +12,48 @@ Drag the RBDominantColor directory into your project. This should include the op
 
 ```objective-c
 
+#import "RBDominantColor.h"
+
+RBDominantColor *dominantColors;
+
 - (void)findDominantColors
 {
-	dominantColors = [[RBDominantColor alloc] init];
-
-	dispatch_async(dispatch_get_global_queue(0, 0), ^{
-		[dominantColors setImage:[UIImage imageNamed:@"test-image.jpg"]];
-
-		// OPTIONAL: Ignore Skin
-		[dominantColors markFace];
-
-		// Use this OR markRect: OR markPoint:withRadius:isForeground: if you know where the foreground is already
-		[dominantColors markDefaultArea];
-
-		// Remove Background
-		[dominantColors grabCut];
-
-		// Reduce Colors
-		[dominantColors kMeans:int(kMeansColorsSlider.value)];
-
-		// Eliminate Similar Colors
-		[dominantColors minimizeColorsWithDistanceThreshold:minimizeColorsSlider.value];
-
-		[self performSelectorOnMainThread:@selector(dominantColorsDone) withObject:nil waitUntilDone:NO];
-	});
+    dominantColors = [[RBDominantColor alloc] init];
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [dominantColors setImage:[UIImage imageNamed:@"test-image.jpg"]];
+        
+        // OPTIONAL: Ignore Skin
+        [dominantColors markFace];
+        
+        // Use this OR markRect: OR markPoint:withRadius:isForeground: if you know where the foreground is already
+        [dominantColors markDefaultArea];
+        
+        // Remove Background
+        [dominantColors grabCut];
+        
+        // Reduce Colors
+        [dominantColors kMeans:16];
+        
+        // Eliminate Similar Colors
+        [dominantColors minimizeColorsWithDistanceThreshold:20.0];
+        
+        [self performSelectorOnMainThread:@selector(dominantColorsDone) withObject:nil waitUntilDone:NO];
+    });
 }
 
 - (void)dominantColorsDone
 {
-	// colorArray is an array of UIColors representing the dominant colors
-	NSLog(@"%@", dominantColors.colorArray);
-
-	// DEBUG - Create an image or image overlay that shows where the background is,
-	// and where the dominant colors came from
+    // colorArray is an array of UIColors representing the dominant colors
+    NSLog(@"%@", dominantColors.colorArray);
+    
+    // DEBUG - Create an image or image overlay that shows where the background is,
+    // and where the dominant colors came from
     UIImage *debugImage = [dominantColors getImageWithBackgroundColor:[UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:0.05] andRemovedColor:[UIColor colorWithRed:1.0 green:1.0 blue:0.0 alpha:0.05] andSwatchColorAlpha:1.0];
+    
+    NSLog(@"%.0fx%.0f", debugImage.size.width, debugImage.size.height);
+    
+    UIView *colorView = [[UIView alloc] init];
     
     // DEBUG - Display the colorArray in a pre-existing view.
     // The view will be emptied out and repopulated with a subview for each element in colorArray
