@@ -6,7 +6,7 @@ It was developed as part of [kloz.it](http://kloz.it), for determining the color
 
 ## Getting Started
 
-Drag the RBDominantColor directory into your project. This should include the opencv framework, the RBDominantColor code, and the xml file used for face detection. Your project probably already uses UIKit, but if it doesn't, you will need to add it as well.
+Drag the RBDominantColor directory into your project. The RBDominantColor directory includes the opencv framework, the RBDominantColor code, and the xml file used for face detection. Your project probably already uses UIKit, but if it doesn't, you will need to add it as well.
 
 ## Usage
 
